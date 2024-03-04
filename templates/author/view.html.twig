@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}View Author - {{ author.first_name }} {{ author.last_name }}{% endblock %}
+
+{% block body %}
+    <h1>Author Details</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <td>{{ author.id }}</td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>{{ author.first_name }} {{ author.last_name }}</td>
+        </tr>
+        <tr>
+            <th>Birthday</th>
+            <td>{{ author.birthday }}</td>
+        </tr>
+        <tr>
+            <th>Gender</th>
+            <td>{{ author.gender }}</td>
+        </tr>
+        <tr>
+            <th>Place of Birth</th>
+            <td>{{ author.place_of_birth }}</td>
+        </tr>
+        <tr>
+            <th>Biography</th>
+            <td>{{ author.biography }}</td>
+        </tr>
+    </table>
+
+    <h2>Books by {{ author.first_name }} {{ author.last_name }}</h2>
+    {% if author.books|length > 0 %}
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Release Date</th>
+                <th>Description</th>
+                <th>ISBN</th>
+                <th>Format</th>
+                <th>No. of Pages</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for book in author.books %}
+                <tr>
+                    <td>{{ book.id }}</td>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.release_date }}</td>
+                    <td>{{ book.description }}</td>
+                    <td>{{ book.isbn }}</td>
+                    <td>{{ book.format }}</td>
+                    <td>{{ book.number_of_pages }}</td>
+                    <td>
+                        <a href="{{ path('book_delete', { 'id': book.id }) }}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% if author.books|length == 0 %}
+            <a href="{{ path('author_delete', { 'id': author.id }) }}">Delete Author</a><br>
+        {% endif %}
+    {% else %}
+        <p>No books found for {{ author.first_name }} {{ author.last_name }}.</p><br>
+        <a href="{{ path('book') }}">Add Books</a>
+    {% endif %}
+{% endblock %}

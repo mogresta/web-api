@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List of Authors{% endblock %}
+
+{% block body %}
+    <h1>List of Authors</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Birthday</th>
+            <th>Gender</th>
+            <th>Place of Birth</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for author in authors %}
+            <tr>
+                <td>{{ author.id }}</td>
+                <td>{{ author.first_name }} {{ author.last_name }}</td>
+                <td>{{ author.birthday }}</td>
+                <td>{{ author.gender }}</td>
+                <td>{{ author.place_of_birth }}</td>
+                <td>
+                    <a href="{{ path('author_view', { 'id': author.id }) }}">View</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">No authors found.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
