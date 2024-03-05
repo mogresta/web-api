@@ -20,7 +20,7 @@
             <tr>
                 <td>{{ author.id }}</td>
                 <td>{{ author.first_name }} {{ author.last_name }}</td>
-                <td>{{ author.birthday }}</td>
+                <td>{{ author.birthday|date('Y-m-d') }}</td>
                 <td>{{ author.gender }}</td>
                 <td>{{ author.place_of_birth }}</td>
                 <td>
@@ -34,4 +34,5 @@
         {% endfor %}
         </tbody>
     </table>
+    <a href="{{ path('author_new') }}">Add New Author</a>
 {% endblock %}

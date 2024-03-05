@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Services\ApiClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -32,6 +33,22 @@ class AuthorController extends AbstractController
         return $this->render('author/view.html.twig', [
             'author' => $response,
         ]);
+    }
+
+    #[Route('/author', name: 'author_new', methods: 'GET')]
+    public function createAuthor()
+    {
+        return $this->render('author/create.html.twig');
+    }
+
+    #[Route('/author', name: 'author_create', methods: 'POST')]
+    public function createNewAuthor(Request $request)
+    {
+        $data = $request->request->all();
+
+        $this->apiClient->createAuthor($data);
+
+        return $this->redirectToRoute('authors_list');
     }
 
     #[Route('/author/{id}/delete', name: 'author_delete', methods: 'GET')]

@@ -126,4 +126,29 @@ class ApiClient
 
         return [];
     }
+
+    public function createAuthor(array $data): array
+    {
+        $this->token = $this->requestStack->getSession()->get('access_token');
+
+        if (!empty($this->token)) {
+            $response = $this->guzzleClient->request('POST', "/api/v2/authors",
+                [
+                    'headers' => [ 'Authorization' => "Bearer {$this->token}" ],
+                    'json' => [
+                        'first_name' => $data['first_name'],
+                        'last_name' => $data['last_name'],
+                        'birthday' => $data['birthday'],
+                        'biography' => $data['biography'],
+                        'gender' => $data['gender'],
+                        'place_of_birth' => $data['place_of_birth'],
+                    ],
+                ]
+            );
+
+            return json_decode($response->getBody()->getContents(), true);
+        }
+
+        return [];
+    }
 }
