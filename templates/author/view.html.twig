@@ -3,6 +3,13 @@
 {% block title %}View Author - {{ author.first_name }} {{ author.last_name }}{% endblock %}
 
 {% block body %}
+    {% for label, messages in app.flashes(['success', 'error']) %}
+        {% for message in messages %}
+            <div class="flash-{{ label }}"><br><br>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
     <h1>Author Details</h1>
     <table>
         <tr>
@@ -63,11 +70,9 @@
             {% endfor %}
             </tbody>
         </table>
-        {% if author.books|length == 0 %}
-            <a href="{{ path('author_delete', { 'id': author.id }) }}">Delete Author</a><br>
-        {% endif %}
     {% else %}
         <p>No books found for {{ author.first_name }} {{ author.last_name }}.</p><br>
-        <a href="{{ path('book') }}">Add Books</a>
+        <a href="{{ path('author_delete', { 'id': author.id }) }}">Delete Author</a><br>
     {% endif %}
+    <a href="{{ path('book') }}">Add Books</a>
 {% endblock %}

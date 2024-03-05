@@ -6,6 +6,7 @@ namespace App\Services;
 
 use GuzzleHttp\Client as GuzzleClient;
 use Symfony\Component\HttpFoundation\RequestStack;
+use GuzzleHttp\Psr7\Response;
 
 class ApiClient
 {
@@ -58,56 +59,34 @@ class ApiClient
         return [];
     }
 
-    public function deleteBook(int $id): void
+    public function deleteBook(int $id): Response
     {
         $this->token = $this->requestStack->getSession()->get('access_token');
 
         if (!empty($this->token)) {
-            $this->guzzleClient->request('DELETE', "/api/v2/books/{$id}",
+            return $this->guzzleClient->request('DELETE', "/api/v2/books/{$id}",
                 [
                     'headers' => [ 'Authorization' => "Bearer {$this->token}" ],
                 ]
             );
         }
+
+        return new Response(500);
     }
 
-    public function createBook(array $data): array
+    public function deleteAuthor(int $id): Response
     {
         $this->token = $this->requestStack->getSession()->get('access_token');
 
         if (!empty($this->token)) {
-            $response = $this->guzzleClient->request('POST', "/api/v2/books",
-                [
-                    'headers' => [ 'Authorization' => "Bearer {$this->token}" ],
-                    'json' => [
-                        'title' => $data['title'],
-                        'release_date' => $data['release_date'],
-                        'description' => $data['description'],
-                        'isbn' => $data['isbn'],
-                        'format' => $data['format'],
-                        'pages' => (int) $data['pages'],
-                        'author' => (int) $data['author'],
-                    ],
-                ]
-            );
-
-            return json_decode($response->getBody()->getContents(), true);
-        }
-
-        return [];
-    }
-
-    public function deleteAuthor(int $id): void
-    {
-        $this->token = $this->requestStack->getSession()->get('access_token');
-
-        if (!empty($this->token)) {
-            $this->guzzleClient->request('DELETE', "/api/v2/authors/{$id}",
+            return $this->guzzleClient->request('DELETE', "/api/v2/authors/{$id}",
                 [
                     'headers' => [ 'Authorization' => "Bearer {$this->token}" ],
                 ]
             );
         }
+
+        return new Response(500);
     }
 
     public function viewAuthor(int $id): array
@@ -127,14 +106,44 @@ class ApiClient
         return [];
     }
 
-    public function createAuthor(array $data): array
+    public function createBook(array $data): Response
     {
         $this->token = $this->requestStack->getSession()->get('access_token');
 
         if (!empty($this->token)) {
-            $response = $this->guzzleClient->request('POST', "/api/v2/authors",
+            return $this->guzzleClient->request('POST', "/api/v2/books",
                 [
-                    'headers' => [ 'Authorization' => "Bearer {$this->token}" ],
+                    'headers' => [
+                        'Authorization' => "Bearer {$this->token}"
+                    ],
+                    'json' => [
+                        'author' => [
+                            'id' => $data['author']
+                        ],
+                        'title' => $data['title'],
+                        'release_date' => $data['release_date'],
+                        'description' => $data['description'],
+                        'isbn' => $data['isbn'],
+                        'format' => $data['format'],
+                        'number_of_pages' => (int) $data['pages'],
+                    ],
+                ]
+            );
+        }
+
+        return new Response(500);
+    }
+
+    public function createAuthor(array $data): Response
+    {
+        $this->token = $this->requestStack->getSession()->get('access_token');
+
+        if (!empty($this->token)) {
+            return $this->guzzleClient->request('POST', "/api/v2/authors",
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer {$this->token}"
+                    ],
                     'json' => [
                         'first_name' => $data['first_name'],
                         'last_name' => $data['last_name'],
@@ -145,10 +154,8 @@ class ApiClient
                     ],
                 ]
             );
-
-            return json_decode($response->getBody()->getContents(), true);
         }
 
-        return [];
+        return new Response(500);
     }
 }

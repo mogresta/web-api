@@ -3,6 +3,13 @@
 {% block title %}Add New Book{% endblock %}
 
 {% block body %}
+    {% for label, messages in app.flashes(['success', 'error']) %}
+        {% for message in messages %}
+            <div class="flash-{{ label }}"><br><br>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
     <h1>Add New Book</h1>
     <form method="post" action="{{ path('book_create') }}">
         <label for="title">Title:</label>

@@ -3,6 +3,13 @@
 {% block title %}List of Authors{% endblock %}
 
 {% block body %}
+    {% for label, messages in app.flashes(['success', 'error']) %}
+        {% for message in messages %}
+            <div class="flash-{{ label }}"><br><br>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
     <h1>List of Authors</h1>
     <table>
         <thead>

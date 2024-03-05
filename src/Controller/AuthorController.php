@@ -26,7 +26,7 @@ class AuthorController extends AbstractController
     }
 
     #[Route('/author/{id}', name: 'author_view', methods: 'GET')]
-    public function viewAuthor($id)
+    public function viewAuthor($id): Response
     {
         $response = $this->apiClient->viewAuthor($id);
 
@@ -36,25 +36,45 @@ class AuthorController extends AbstractController
     }
 
     #[Route('/author', name: 'author_new', methods: 'GET')]
-    public function createAuthor()
+    public function createAuthor(): Response
     {
         return $this->render('author/create.html.twig');
     }
 
     #[Route('/author', name: 'author_create', methods: 'POST')]
-    public function createNewAuthor(Request $request)
+    public function createNewAuthor(Request $request): Response
     {
         $data = $request->request->all();
 
-        $this->apiClient->createAuthor($data);
+        $response = $this->apiClient->createAuthor($data);
+
+        $request->getSession()->getFlashBag()->clear();
+
+        if ($response->getStatusCode() === 200) {
+            $this->addFlash('success', 'Author successfully created!');
+        }
+
+        if ($response->getStatusCode() === 500) {
+            $this->addFlash('error', 'Something went wrong!');
+        }
 
         return $this->redirectToRoute('authors_list');
     }
 
     #[Route('/author/{id}/delete', name: 'author_delete', methods: 'GET')]
-    public function deleteAuthor($id)
+    public function deleteAuthor($id, Request $request): Response
     {
-        $this->apiClient->deleteAuthor($id);
+        $response = $this->apiClient->deleteAuthor($id);
+
+        $request->getSession()->getFlashBag()->clear();
+
+        if ($response->getStatusCode() === 204) {
+            $this->addFlash('success', 'Author successfully deleted!');
+        }
+
+        if ($response->getStatusCode() === 500) {
+            $this->addFlash('error', 'Something went wrong!');
+        }
 
         return $this->redirectToRoute('authors_list');
     }

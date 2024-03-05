@@ -16,7 +16,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/book', name: 'book', methods: 'GET')]
-    public function index(Request $request): Response
+    public function index(): Response
     {
         $authors = $this->apiClient->listAuthors();
 
@@ -30,15 +30,35 @@ class BookController extends AbstractController
     {
         $data = $request->request->all();
 
-        $apiResponse = $this->apiClient->createBook($data);
+        $response = $this->apiClient->createBook($data);
+
+        $request->getSession()->getFlashBag()->clear();
+
+        if ($response->getStatusCode() === 200) {
+            $this->addFlash('success', 'Book successfully created!');
+        }
+
+        if ($response->getStatusCode() === 500) {
+            $this->addFlash('error', 'Something went wrong!');
+        }
 
         return $this->redirectToRoute('book');
     }
 
     #[Route('/book/{id}/delete', name: 'book_delete', methods: 'GET')]
-    public function deleteBook($id, Request $request)
+    public function deleteBook($id, Request $request): Response
     {
-        $this->apiClient->deleteBook($id);
+        $response = $this->apiClient->deleteBook($id);
+
+        $request->getSession()->getFlashBag()->clear();
+
+        if ($response->getStatusCode() === 204) {
+            $this->addFlash('success', 'Book successfully deleted!');
+        }
+
+        if ($response->getStatusCode() === 500) {
+            $this->addFlash('error', 'Something went wrong!');
+        }
 
         return $this->redirect($request->getUri());
     }
