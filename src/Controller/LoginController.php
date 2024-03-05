@@ -15,7 +15,7 @@ class LoginController extends AbstractController
     ){
     }
 
-    #[Route('/login', name: 'login_page', methods: 'GET')]
+    #[Route('/', name: 'login_page', methods: 'GET')]
     public function index(): Response
     {
         return $this->render('login/index.html.twig');
@@ -26,6 +26,12 @@ class LoginController extends AbstractController
     {
         $email = $request->request->get('_username');
         $password = $request->request->get('_password');
+
+        if (empty($email) || empty($password)) {
+            $this->addFlash('error', 'Invalid email or password.');
+
+            return $this->redirectToRoute('login_page');
+        }
 
         $apiResponse = $this->apiClient->authenticate($email, $password);
 
